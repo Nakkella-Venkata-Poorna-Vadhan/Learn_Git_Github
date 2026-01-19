@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -132,13 +133,12 @@ export default function CommandExplorer() {
 
                 {/* Try It Button */}
                 <Button
-                  onClick={() => {
-                    // Navigate to simulator with command pre-filled
-                    window.location.href = `/simulator?command=${encodeURIComponent(selectedCommand.name)}`;
-                  }}
+                  asChild
                   className="w-full"
                 >
-                  Try This Command in Simulator
+                  <Link href={`/simulator?command=${encodeURIComponent(selectedCommand.name)}`}>
+                    Try This Command in Simulator
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

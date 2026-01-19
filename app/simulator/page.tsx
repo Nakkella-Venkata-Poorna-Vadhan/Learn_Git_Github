@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Terminal, Play, RotateCcw, HelpCircle } from "lucide-react";
+import { Terminal, Play, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 
@@ -20,7 +20,7 @@ interface FileState {
   status: "untracked" | "modified" | "staged" | "committed";
 }
 
-export default function Simulator() {
+function SimulatorContent() {
   const searchParams = useSearchParams();
   const prefillCommand = searchParams.get("command") || "";
 
@@ -397,5 +397,21 @@ export default function Simulator() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Simulator() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">Loading simulator...</p>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <SimulatorContent />
+    </Suspense>
   );
 }
