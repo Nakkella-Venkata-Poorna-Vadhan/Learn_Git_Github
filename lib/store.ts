@@ -10,6 +10,14 @@ export interface Progress {
   lastActivity: Date | null;
 }
 
+export interface JourneyProgress {
+  completedChapters: string[];
+  currentChapter: string;
+  unlockedSkills: string[];
+  journeyXP: number;
+  freePlayUsed: boolean;
+}
+
 const defaultProgress: Progress = {
   level: 1,
   completedLessons: [],
@@ -18,7 +26,16 @@ const defaultProgress: Progress = {
   lastActivity: null,
 };
 
+const defaultJourneyProgress: JourneyProgress = {
+  completedChapters: [],
+  currentChapter: "ch-1",
+  unlockedSkills: [],
+  journeyXP: 0,
+  freePlayUsed: false,
+};
+
 const STORAGE_KEY = "git-master-progress";
+const JOURNEY_STORAGE_KEY = "git-master-journey";
 
 function loadProgress(): Progress {
   if (typeof window === "undefined") return defaultProgress;
@@ -38,12 +55,35 @@ function loadProgress(): Progress {
   return defaultProgress;
 }
 
+function loadJourneyProgress(): JourneyProgress {
+  if (typeof window === "undefined") return defaultJourneyProgress;
+  try {
+    const stored = localStorage.getItem(JOURNEY_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return { ...defaultJourneyProgress, ...parsed };
+    }
+  } catch (e) {
+    console.error("Failed to load journey progress:", e);
+  }
+  return defaultJourneyProgress;
+}
+
 function saveProgress(progress: Progress): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
   } catch (e) {
     console.error("Failed to save progress:", e);
+  }
+}
+
+function saveJourneyProgress(progress: JourneyProgress): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(JOURNEY_STORAGE_KEY, JSON.stringify(progress));
+  } catch (e) {
+    console.error("Failed to save journey progress:", e);
   }
 }
 
@@ -116,5 +156,58 @@ export function useProgressStore() {
     completeLesson,
     addXP,
     unlockBadge,
+  };
+}
+
+export function useJourneyStore() {
+  const [journeyProgress, setJourneyProgress] = useState<JourneyProgress>(loadJourneyProgress);
+
+  useEffect(() => {
+    setJourneyProgress(loadJourneyProgress());
+  }, []);
+
+  const completeChapter = useCallback((chapterId: string, xpReward: number, skillId: string) => {
+    setJourneyProgress((prev) => {
+      if (prev.completedChapters.includes(chapterId)) return prev;
+      const updated: JourneyProgress = {
+        ...prev,
+        completedChapters: [...prev.completedChapters, chapterId],
+        unlockedSkills: prev.unlockedSkills.includes(skillId)
+          ? prev.unlockedSkills
+          : [...prev.unlockedSkills, skillId],
+        journeyXP: prev.journeyXP + xpReward,
+      };
+      saveJourneyProgress(updated);
+      return updated;
+    });
+  }, []);
+
+  const setCurrentChapter = useCallback((chapterId: string) => {
+    setJourneyProgress((prev) => {
+      const updated = { ...prev, currentChapter: chapterId };
+      saveJourneyProgress(updated);
+      return updated;
+    });
+  }, []);
+
+  const markFreePlayUsed = useCallback(() => {
+    setJourneyProgress((prev) => {
+      const updated = { ...prev, freePlayUsed: true };
+      saveJourneyProgress(updated);
+      return updated;
+    });
+  }, []);
+
+  const resetJourney = useCallback(() => {
+    saveJourneyProgress(defaultJourneyProgress);
+    setJourneyProgress(defaultJourneyProgress);
+  }, []);
+
+  return {
+    journeyProgress,
+    completeChapter,
+    setCurrentChapter,
+    markFreePlayUsed,
+    resetJourney,
   };
 }
