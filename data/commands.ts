@@ -366,4 +366,378 @@ export const Commands: Command[] = [
     commonMistakes: ["Confusing with git reset"],
     whatHappens: "Creates a new commit that undoes the changes from specified commit",
   },
+  {
+    name: "git diff",
+    description: "Show changes between commits, commit and working tree, etc.",
+    syntax: "git diff [options] [<commit>] [--] [<path>...]",
+    category: "Basics",
+    whenToUse: "To see what changes you've made before staging or committing",
+    examples: [
+      {
+        description: "Show unstaged changes",
+        command: "git diff",
+      },
+      {
+        description: "Show staged changes",
+        command: "git diff --staged",
+      },
+      {
+        description: "Compare two branches",
+        command: "git diff main..feature-login",
+      },
+    ],
+    commonMistakes: [
+      "Forgetting --staged to see already-staged changes",
+      "Not understanding that plain git diff only shows unstaged changes",
+    ],
+    whatHappens: "Displays line-by-line differences between file versions in your repository",
+  },
+  {
+    name: "git rm",
+    description: "Remove files from the working tree and from the index",
+    syntax: "git rm [options] <file>...",
+    category: "Basics",
+    whenToUse: "To delete a tracked file and stage the deletion in one step",
+    examples: [
+      {
+        description: "Remove a file from repo and disk",
+        command: "git rm old-file.txt",
+      },
+      {
+        description: "Remove from tracking but keep on disk",
+        command: "git rm --cached secret.env",
+      },
+    ],
+    commonMistakes: [
+      "Using plain rm instead of git rm (deletion won't be staged)",
+      "Forgetting --cached when you only want to untrack a file",
+    ],
+    whatHappens: "Deletes the file from your working directory and stages the removal for the next commit",
+  },
+  {
+    name: "git mv",
+    description: "Move or rename a file, directory, or symlink",
+    syntax: "git mv <source> <destination>",
+    category: "Basics",
+    whenToUse: "To rename or move a tracked file while preserving Git history",
+    examples: [
+      {
+        description: "Rename a file",
+        command: "git mv old-name.js new-name.js",
+      },
+      {
+        description: "Move a file to a subdirectory",
+        command: "git mv utils.js src/utils.js",
+      },
+    ],
+    commonMistakes: [
+      "Moving files with the OS file manager instead of git mv (Git may lose rename tracking)",
+      "Forgetting to commit after the move",
+    ],
+    whatHappens: "Renames or moves the file and stages the change automatically",
+  },
+  {
+    name: "git fetch",
+    description: "Download objects and refs from a remote repository",
+    syntax: "git fetch [<remote>] [<branch>]",
+    category: "Remote",
+    whenToUse: "To download remote changes without merging them into your branch",
+    examples: [
+      {
+        description: "Fetch all branches from origin",
+        command: "git fetch origin",
+      },
+      {
+        description: "Fetch a specific branch",
+        command: "git fetch origin main",
+      },
+      {
+        description: "Fetch and prune deleted remote branches",
+        command: "git fetch --prune",
+      },
+    ],
+    commonMistakes: [
+      "Expecting fetch to update your working directory (it only updates remote-tracking branches)",
+      "Confusing git fetch with git pull",
+    ],
+    whatHappens: "Downloads commits, files, and refs from the remote into your local repo without changing your working directory",
+  },
+  {
+    name: "git tag",
+    description: "Create, list, or delete tags",
+    syntax: "git tag [-a] <tagname> [-m <message>] [<commit>]",
+    category: "History",
+    whenToUse: "To mark specific commits as important, such as release versions",
+    examples: [
+      {
+        description: "Create a lightweight tag",
+        command: "git tag v1.0.0",
+      },
+      {
+        description: "Create an annotated tag with a message",
+        command: "git tag -a v1.0.0 -m \"Release version 1.0.0\"",
+      },
+      {
+        description: "List all tags",
+        command: "git tag -l",
+      },
+      {
+        description: "Push tags to remote",
+        command: "git push origin --tags",
+      },
+    ],
+    commonMistakes: [
+      "Forgetting to push tags (they are not pushed by default)",
+      "Using lightweight tags instead of annotated tags for releases",
+    ],
+    whatHappens: "Creates a named reference pointing to a specific commit, commonly used for version releases",
+  },
+  {
+    name: "git bisect",
+    description: "Use binary search to find the commit that introduced a bug",
+    syntax: "git bisect start | git bisect bad | git bisect good <commit>",
+    category: "Git Tools",
+    whenToUse: "When you know something is broken but not which commit caused it",
+    examples: [
+      {
+        description: "Start a bisect session",
+        command: "git bisect start",
+      },
+      {
+        description: "Mark the current commit as bad",
+        command: "git bisect bad",
+      },
+      {
+        description: "Mark a known good commit",
+        command: "git bisect good v1.0.0",
+      },
+      {
+        description: "End the bisect session",
+        command: "git bisect reset",
+      },
+    ],
+    commonMistakes: [
+      "Forgetting to run git bisect reset after finding the bad commit",
+      "Not testing each step properly, leading to wrong results",
+    ],
+    whatHappens: "Git checks out commits between good and bad, halving the range each time until the bug-introducing commit is found",
+  },
+  {
+    name: "git blame",
+    description: "Show what revision and author last modified each line of a file",
+    syntax: "git blame [options] <file>",
+    category: "Git Tools",
+    whenToUse: "To find out who changed a specific line and when",
+    examples: [
+      {
+        description: "Blame a file",
+        command: "git blame app.js",
+      },
+      {
+        description: "Blame a specific line range",
+        command: "git blame -L 10,20 app.js",
+      },
+    ],
+    commonMistakes: [
+      "Using blame to assign fault instead of understanding context",
+      "Not using -L to narrow down the output on large files",
+    ],
+    whatHappens: "Annotates each line of a file with the commit hash, author, and date of the last change",
+  },
+  {
+    name: "git cherry-pick",
+    description: "Apply the changes introduced by specific existing commits",
+    syntax: "git cherry-pick <commit>...",
+    category: "Advanced",
+    whenToUse: "To apply a specific commit from another branch without merging the entire branch",
+    examples: [
+      {
+        description: "Cherry-pick a single commit",
+        command: "git cherry-pick abc1234",
+      },
+      {
+        description: "Cherry-pick without committing",
+        command: "git cherry-pick --no-commit abc1234",
+      },
+    ],
+    commonMistakes: [
+      "Cherry-picking the same commit into multiple branches causes duplicate commits",
+      "Forgetting to resolve conflicts during a cherry-pick",
+    ],
+    whatHappens: "Creates a new commit on the current branch that replicates the changes from the specified commit",
+  },
+  {
+    name: "git reflog",
+    description: "Manage and show the reference log of HEAD updates",
+    syntax: "git reflog [show] [<ref>]",
+    category: "Git Tools",
+    whenToUse: "To recover lost commits or undo a bad reset/rebase",
+    examples: [
+      {
+        description: "View the reflog",
+        command: "git reflog",
+      },
+      {
+        description: "View reflog for a specific branch",
+        command: "git reflog show feature-login",
+      },
+      {
+        description: "Recover a lost commit",
+        command: "git checkout HEAD@{3}",
+      },
+    ],
+    commonMistakes: [
+      "Not knowing reflog exists and thinking lost commits are gone forever",
+      "Reflog entries expire after 90 days by default",
+    ],
+    whatHappens: "Displays a log of every time HEAD changed, allowing you to find and recover previous states",
+  },
+  {
+    name: "git config",
+    description: "Get and set repository or global options",
+    syntax: "git config [--global|--local|--system] <key> <value>",
+    category: "Basics",
+    whenToUse: "To set your username, email, default editor, or other Git settings",
+    examples: [
+      {
+        description: "Set your name globally",
+        command: "git config --global user.name \"Your Name\"",
+      },
+      {
+        description: "Set your email globally",
+        command: "git config --global user.email \"you@example.com\"",
+      },
+      {
+        description: "List all config settings",
+        command: "git config --list",
+      },
+    ],
+    commonMistakes: [
+      "Setting config locally when you meant global, or vice versa",
+      "Forgetting to set user.name and user.email before your first commit",
+    ],
+    whatHappens: "Reads or writes configuration variables stored in system, global, or local config files",
+  },
+  {
+    name: "git show",
+    description: "Show various types of objects (commits, tags, trees, blobs)",
+    syntax: "git show [<object>]",
+    category: "History",
+    whenToUse: "To inspect a specific commit, tag, or other Git object in detail",
+    examples: [
+      {
+        description: "Show the latest commit",
+        command: "git show",
+      },
+      {
+        description: "Show a specific commit",
+        command: "git show abc1234",
+      },
+      {
+        description: "Show a tagged release",
+        command: "git show v1.0.0",
+      },
+    ],
+    commonMistakes: [
+      "Confusing git show with git log (show displays a single object, log lists history)",
+      "Not specifying an object and being surprised by the default HEAD output",
+    ],
+    whatHappens: "Displays the metadata and content diff of the specified Git object",
+  },
+  {
+    name: "git shortlog",
+    description: "Summarize git log output by author",
+    syntax: "git shortlog [options] [<revision-range>]",
+    category: "History",
+    whenToUse: "To see a summary of commits grouped by author, often for changelogs",
+    examples: [
+      {
+        description: "Group commits by author",
+        command: "git shortlog",
+      },
+      {
+        description: "Show commit counts per author",
+        command: "git shortlog -s -n",
+      },
+    ],
+    commonMistakes: [
+      "Forgetting -s for a summary count view",
+      "Running on a shallow clone which may miss older commits",
+    ],
+    whatHappens: "Groups commits by author and lists their commit messages, useful for generating release notes",
+  },
+  {
+    name: "git describe",
+    description: "Give an object a human-readable name based on an available tag",
+    syntax: "git describe [--tags] [<commit>]",
+    category: "Git Tools",
+    whenToUse: "To generate a version string based on the nearest tag (useful in CI/CD)",
+    examples: [
+      {
+        description: "Describe the current commit",
+        command: "git describe",
+      },
+      {
+        description: "Describe using any tag (not just annotated)",
+        command: "git describe --tags",
+      },
+    ],
+    commonMistakes: [
+      "Running git describe in a repo with no tags (it will fail)",
+      "Not understanding the output format: tag-numCommits-gHash",
+    ],
+    whatHappens: "Returns a string like v1.0.0-3-gabc1234 indicating the nearest tag, number of commits since, and the short hash",
+  },
+  {
+    name: "git worktree",
+    description: "Manage multiple working trees attached to the same repository",
+    syntax: "git worktree add <path> [<branch>]",
+    category: "Advanced",
+    whenToUse: "To work on multiple branches simultaneously without stashing or cloning",
+    examples: [
+      {
+        description: "Add a new worktree for a branch",
+        command: "git worktree add ../hotfix hotfix-branch",
+      },
+      {
+        description: "List all worktrees",
+        command: "git worktree list",
+      },
+      {
+        description: "Remove a worktree",
+        command: "git worktree remove ../hotfix",
+      },
+    ],
+    commonMistakes: [
+      "Trying to check out the same branch in two worktrees (not allowed)",
+      "Forgetting to remove worktrees when done, leaving stale directories",
+    ],
+    whatHappens: "Creates an additional working directory linked to the same repository, letting you work on another branch without switching",
+  },
+  {
+    name: "git submodule",
+    description: "Initialize, update, or inspect submodules within a repository",
+    syntax: "git submodule [add|init|update|status] [<repository>] [<path>]",
+    category: "Advanced",
+    whenToUse: "To include and manage external repositories inside your project",
+    examples: [
+      {
+        description: "Add a submodule",
+        command: "git submodule add https://github.com/user/lib.git libs/lib",
+      },
+      {
+        description: "Initialize and fetch submodules after cloning",
+        command: "git submodule update --init --recursive",
+      },
+      {
+        description: "Check submodule status",
+        command: "git submodule status",
+      },
+    ],
+    commonMistakes: [
+      "Forgetting to run git submodule update --init after cloning a repo with submodules",
+      "Committing changes inside a submodule without pushing the submodule first",
+    ],
+    whatHappens: "Manages nested repositories, allowing you to pin external dependencies at specific commits",
+  },
 ];
