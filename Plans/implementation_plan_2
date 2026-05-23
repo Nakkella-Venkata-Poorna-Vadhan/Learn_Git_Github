@@ -1,0 +1,65 @@
+# The Journey Feature — Implementation Plan
+
+## Overview
+Build an immersive, story-driven Git learning path with 30 progressive chapters. The user follows a continuous project narrative, unlocking skills and earning XP as they complete chapters.
+
+## Proposed Changes
+
+### 1. Data Layer
+#### [NEW] `data/journey.ts`
+- 30 chapters grouped into 6 acts (5 chapters each)
+- Each chapter: `id`, `title`, `act`, `description`, `narrative`, `lesson` (markdown content), `commands[]`, `skill`, `xpReward`, `difficulty`
+- Acts: Genesis → Branching → Collaboration → Time Travel → Advanced → Mastery
+- Type exports: `Chapter`, `Act`, `journeyChapters`, `journeyActs`
+
+---
+
+### 2. Components
+#### [NEW] `components/journey/journey-map.tsx`
+- Visual vertical timeline/path showing all 30 chapters
+- Chapters grouped by Act with act headers
+- Completed/current/locked states with animations
+- Click to navigate to chapter
+
+#### [NEW] `components/journey/chapter-card.tsx`
+- Card component for individual chapters in the map
+- Shows title, difficulty badge, XP reward, skill icon
+- Animated completion state (checkmark, glow)
+
+#### [NEW] `components/journey/journey-progress-bar.tsx`
+- Overall journey progress indicator
+- Shows current act, chapters completed, total XP
+
+#### [NEW] `components/journey/skill-tree.tsx`
+- Visual display of unlocked skills
+- Grid of skill icons with locked/unlocked states
+
+#### [NEW] `components/journey/chapter-content.tsx`
+- Renders chapter lesson content (markdown)
+- "Complete Chapter" button at bottom
+- Navigation between chapters
+
+---
+
+### 3. Pages
+#### [NEW] `app/journey/page.tsx`
+- Main journey hub page
+- Journey progress bar at top
+- Journey map (main content)
+- Skill tree sidebar/section
+
+#### [NEW] `app/journey/[chapterId]/page.tsx`
+- Dynamic chapter detail page
+- Chapter narrative + lesson content
+- Complete button → triggers store update
+- Next/prev chapter navigation
+
+---
+
+### 4. Navigation Update
+#### [MODIFY] `components/layout/header.tsx`
+- Add "Journey" link to nav items
+
+## Verification Plan
+- Run `npm run build` to verify no TypeScript errors
+- Visual check in browser via dev server
